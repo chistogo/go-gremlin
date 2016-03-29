@@ -14,34 +14,30 @@ import (
 
 func main() {
     
-    gremlinIP := 127.0.0.1
-    gremlinPort := 8888
+    gremlinIP := "127.0.0.1"
+    gremlinPort := "8888"
     
     clear()
     fmt.Println("ʕ◔ϖ◔ʔ  Welcome to the GO Gremlin Client Process!!!  ʕ◔ϖ◔ʔ")
     
     //Open File
     file, err := os.Open("file.txt")
-    checkError(err)
-    
-    //File to Write to
-    newFile , err := os.Create("newfile.html")
-    checkError(err)
-    
-    //Copy over the data. DataReceive <-- DataSend
-    io.Copy(newFile,file)
-    
+    checkError(err)   
+   
     //Connect to Gremlin
-    conn, err := net.Dial("tcp", "127.0.0.1:8888")
+    conn, err := net.Dial("tcp", gremlinIP+":"+gremlinPort)
     checkError(err)
-    //Sends to file to Gremlin    
-    status, err := io.Copy(newFile,conn)
+    fmt.Println("Sending File ...")
+    //Sends to file to Gremlin
+    //Copy over the data. DataReceive <-- DataSend    
+    status, err := io.Copy(conn,file)
     checkError(err)
     fmt.Println(status)
-    
+    fmt.Println("Done Sending")
    
 }
 
+//General Error Catching 
 func checkError(err error)  {
     if err != nil {
         log.Fatal(err)
