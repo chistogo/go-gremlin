@@ -13,6 +13,10 @@ import (
 
 
 func main() {
+    
+    gremlinIP := 127.0.0.1
+    gremlinPort := 8888
+    
     clear()
     fmt.Println("ʕ◔ϖ◔ʔ  Welcome to the GO Gremlin Client Process!!!  ʕ◔ϖ◔ʔ")
     
@@ -21,16 +25,16 @@ func main() {
     checkError(err)
     
     //File to Write to
-    newFile , err := os.Create("newfile.txt")
+    newFile , err := os.Create("newfile.html")
     checkError(err)
     
     //Copy over the data. DataReceive <-- DataSend
     io.Copy(newFile,file)
     
     //Connect to Gremlin
-    conn, err := net.Dial("tcp", "google.com:80")
+    conn, err := net.Dial("tcp", "127.0.0.1:8888")
     checkError(err)
-    fmt.Fprintf(conn, "GET / HTTP/1.0\r\n\r\n")
+    //Sends to file to Gremlin    
     status, err := io.Copy(newFile,conn)
     checkError(err)
     fmt.Println(status)
