@@ -8,7 +8,8 @@ import (
     "net"
     "os/exec"
     "os"
-    "io"
+    
+    "bufio"
 )
 
 
@@ -37,11 +38,35 @@ func main(){
 
 //TODO: Make sure this is READ and WRITTEN using a buffer
 func handleConnection(conn net.Conn){
-    fmt.Println("Connection:"+conn.RemoteAddr().String())
+    
     file, err := os.Create("newfile.txt")
     checkError(err)
+    
+    //We can change the buffer size if needed
+    reader := bufio.NewReader(conn)
+    writer := bufio.NewWriter(file)
+        
+    fmt.Println("Connection:"+conn.RemoteAddr().String())
+    
     //  Newfile<==OLD
-    io.Copy(file,conn)
+    
+    buffer := make([]byte, 32)
+    
+    numberOfBytesReadIn , err := reader.Read(buffer)
+    checkError(err)
+    _, err = writer.Write(buffer)
+    checkError(err)
+    writer.Flush()
+    
+    for(numberOfBytesReadIn != 0){
+        numberOfBytesReadIn , err = reader.Read(buffer)
+        checkError(err)
+        _, err = writer.Write(buffer)
+        checkError(err)
+        
+    
+    }
+    writer.Flush()
     
 }
 
