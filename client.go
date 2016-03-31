@@ -21,7 +21,7 @@ func main() {
     fmt.Println("ʕ◔ϖ◔ʔ  Welcome to the GO Gremlin Client Process!!!  ʕ◔ϖ◔ʔ")
     
     //Open File
-    file, err := os.Open("file.txt")
+    file, err := os.Open("go.png")
     checkError(err)   
    
     //Connect to Gremlin

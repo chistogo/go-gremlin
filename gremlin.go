@@ -1,15 +1,15 @@
-//The goal of this process is to create a buffered reader and Writer to the network and drop a percentage of the buffered
-
 package main
+//The goal of this process is to create a buffered reader and Writer to the network and drop a percentage of the buffered
 
 import (
     "fmt"
     "log"
-    "net"
+    "net" 
     "os/exec"
     "os"
-    
-    "bufio"
+    // "io"
+    "io/ioutil"
+    // "bytes"
 )
 
 
@@ -40,17 +40,27 @@ func main(){
 func handleConnection(conn net.Conn){
     
     file, err := os.Create("newfile.txt")
-    checkError(err)
+    //checkError(err)
     
     //We can change the buffer size if needed
-    reader := bufio.NewReader(conn)
-    writer := bufio.NewWriter(file)
+   // buff := make([]byte, 32) //Creates a buffer for 64 Bytes
+    reader, err := ioutil.ReadAll(conn)
+    checkError(err)
+    //writer := 
         
     fmt.Println("Connection:"+conn.RemoteAddr().String())
     
     //  Newfile<==OLD
+    //conn.Write
+    for i := 0;  i < len(reader); i++ { //while i is less than the length of the reader
+        if(i % 32 ==  0 && i != 0){     //If 
+               file.Write(reader[i-32:i])
+        }
+        if(i % 32 ==  0 && i + 32 > len(reader)){
+            file.Write(reader[i:len(reader)])
+        }
+    }
     
-        
 }
 
 
