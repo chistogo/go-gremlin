@@ -22,6 +22,31 @@ func main() {
     
     //Open File
     file, err := os.Open("go.png")
+    testFile, _ := os.Create("testfile.png.")
+    
+    
+    //Making 32 byte buffer
+    buff := make([]byte , 32)
+    
+    
+    var offSet int64
+    offSet = 0
+    for{
+        _, err := file.ReadAt(buff, offSet)
+        testFile.Write(buff)
+       if (err == io.EOF) {
+           break;
+       }else{
+           checkError(err)
+       }
+       offSet = offSet + 32
+    }
+    
+    
+    
+    
+    
+    
     checkError(err)   
    
     //Connect to Gremlin
