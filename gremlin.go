@@ -50,24 +50,7 @@ func handleConnection(conn net.Conn){
     
     //  Newfile<==OLD
     
-    buffer := make([]byte, 32)
-    
-    numberOfBytesReadIn , err := reader.Read(buffer)
-    checkError(err)
-    _, err = writer.Write(buffer)
-    checkError(err)
-    writer.Flush()
-    
-    for(numberOfBytesReadIn != 0){
-        numberOfBytesReadIn , err = reader.Read(buffer)
-        checkError(err)
-        _, err = writer.Write(buffer)
-        checkError(err)
         
-    
-    }
-    writer.Flush()
-    
 }
 
 
