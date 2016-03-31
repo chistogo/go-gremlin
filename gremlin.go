@@ -6,7 +6,7 @@ import (
     "log"
     "net" 
     "os/exec"
-    "os"
+    //"os"
     // "io"
     "io/ioutil"
     // "bytes"
@@ -39,8 +39,14 @@ func main(){
 //TODO: Make sure this is READ and WRITTEN using a buffer
 func handleConnection(conn net.Conn){
     
-    file, err := os.Create("newfile.txt")
-    //checkError(err)
+    receiverIP := "127.0.0.1"
+    receiverPort := "8887"
+    connToReceive, err := net.Dial("tcp", receiverIP+":"+receiverPort)
+    checkError(err)
+    fmt.Println("Sending File ...")
+    
+    //file, err := os.Create("newfile.png")
+    
     
     //We can change the buffer size if needed
    // buff := make([]byte, 32) //Creates a buffer for 64 Bytes
@@ -54,10 +60,11 @@ func handleConnection(conn net.Conn){
     //conn.Write
     for i := 0;  i < len(reader); i++ { //while i is less than the length of the reader
         if(i % 32 ==  0 && i != 0){     //If 
-               file.Write(reader[i-32:i])
+               connToReceive.Write(reader[i-32:i])
         }
         if(i % 32 ==  0 && i + 32 > len(reader)){
-            file.Write(reader[i:len(reader)])
+            connToReceive.Write(reader[i:len(reader)])
+            connToReceive.Close()
         }
     }
     
