@@ -37,14 +37,15 @@ func main(){
     oldSequenceNum = 0 
     
     for{
-        numOfBytesReceived, _ , err := clientConn.ReadFromUDP(buf)
+        numOfBytesReceived, addressFrom , err := clientConn.ReadFromUDP(buf)
+        fmt.Printf("Received %d bytes\n", numOfBytesReceived)
         checkError(err)
         //The sequenceNum on the packet matches the anticipated sequenceNum
         fmt.Printf("Current SeqNum:%d\n",buf[numOfBytesReceived -1])
         if(currentSequenceNum == buf[numOfBytesReceived -1]) {
             _, err = testFile.Write(buf[:numOfBytesReceived-1])
             seqBuff[0] = currentSequenceNum 
-            clientConn.Write(seqBuff)
+            clientConn.WriteToUDP(seqBuff,addressFrom)
             checkError(err)
             oldSequenceNum = currentSequenceNum
             if(currentSequenceNum == 255){
@@ -61,7 +62,7 @@ func main(){
         }else {
             
         }
-        fmt.Printf("Received %d bytes\n", numOfBytesReceived)
+        
         
         
         checkError(err)

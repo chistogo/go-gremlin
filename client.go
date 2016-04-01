@@ -76,7 +76,7 @@ func main() {
        _,_,err = SendingConn.ReadFromUDP(seqBuff)
        //If time out occures
        
-       if(err.(net.Error).Timeout()){
+       if(err != nil && err.(net.Error).Timeout()){
             SendingConn.Write(append(buff[:numberOfBytes], sequenceNum))
             fmt.Println("Resending")
        }else{
