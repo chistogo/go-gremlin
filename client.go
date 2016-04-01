@@ -40,7 +40,7 @@ func main() {
     checkError(err)
     
     //Create the Connection for Sending 
-    SendingConn, err := net.DialUDP("udp", localAddr, serverAddr)
+    SendingConn, err := net.ListenUDP("udp", localAddr)
     checkError(err)
     //defer SendingConn.Close()
     
@@ -50,7 +50,7 @@ func main() {
     //Sends to file to Gremlin
     //Copy over the data. DataReceive <-- DataSend    
     //Making 32 byte buffer
-    buff := make([]byte , 32)
+    
     
     
     var offSet int64
@@ -60,9 +60,11 @@ func main() {
     offSet = 0
     
     for{
-             
+        buff := make([]byte , 32)
+        //Read from file at off set and load it into our buffer
         numberOfBytes, err := file.ReadAt(buff, offSet) // Read file with our buffer
-        SendingConn.Write(append(buff[:numberOfBytes], sequenceNum)) // Places sequenceNum at the end
+        fmt.Printf("Sending Payload: %d  Seqence Number:%d \n",offSet,sequenceNum)
+        SendingConn.WriteToUDP(append(buff[:numberOfBytes], sequenceNum),serverAddr) // Places sequenceNum at the end
         
        if (err == io.EOF) {
            break;
@@ -70,14 +72,20 @@ func main() {
            checkError(err)
        }
        //Time for timeout
+       
        t:=time.Now()
-       SendingConn.SetDeadline(t.Add(time.Second))
+       SendingConn.SetDeadline(t.Add(time.Millisecond+100000000 ))
        //Recieves ACK packet
+       
+       
+       fmt.Println("Reading from UDP...")
        _,_,err = SendingConn.ReadFromUDP(seqBuff)
        //If time out occures
        
-       if(err != nil && err.(net.Error).Timeout()){
-            SendingConn.Write(append(buff[:numberOfBytes], sequenceNum))
+       if(err != nil && err.(net.Error).Timeout() || seqBuff[0] != sequenceNum){
+           SendingConn.Close()
+           SendingConn, err = net.ListenUDP("udp", localAddr)
+            //SendingConn.WriteToUDP(append(buff[:numberOfBytes], sequenceNum), serverAddr)
             fmt.Println("Resending")
        }else{
        checkError(err)
@@ -88,7 +96,8 @@ func main() {
        if(sequenceNum == 255){ //If the sequenceNum is at its max value restart
             sequenceNum = 0
         } else {
-            sequenceNum++
+            fmt.Println("I'm incrementing")
+            sequenceNum = sequenceNum + 1
         }
        }//end of else
         

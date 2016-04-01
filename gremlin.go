@@ -11,6 +11,8 @@ import (
    // "io/ioutil"
     // "bytes"
     "os"
+    "math/rand"
+    "time"
 )
 
 
@@ -36,7 +38,11 @@ func main(){
     var oldSequenceNum byte 
     oldSequenceNum = 0 
     
+    rand.Seed(time.Now().Unix())
+    fail := 95
     for{
+        //Read from Client
+        fmt.Println("Reading from client...")
         numOfBytesReceived, addressFrom , err := clientConn.ReadFromUDP(buf)
         fmt.Printf("Received %d bytes\n", numOfBytesReceived)
         checkError(err)
@@ -45,7 +51,15 @@ func main(){
         if(currentSequenceNum == buf[numOfBytesReceived -1]) {
             _, err = testFile.Write(buf[:numOfBytesReceived-1])
             seqBuff[0] = currentSequenceNum 
-            clientConn.WriteToUDP(seqBuff,addressFrom)
+            
+            
+            
+            if(rand.Intn(100)>fail){
+                clientConn.WriteToUDP(seqBuff,addressFrom)
+            }
+            
+            
+            
             checkError(err)
             oldSequenceNum = currentSequenceNum
             if(currentSequenceNum == 255){
@@ -56,11 +70,16 @@ func main(){
             }       
         //Client didn't get AWK of the old packet
         } else if (buf[numOfBytesReceived -1] == oldSequenceNum){
+            fmt.Println("Sequence Number Does Not Match")
             seqBuff[0] = oldSequenceNum
-            clientConn.Write(seqBuff)
+            
+            if(rand.Intn(100)>fail){
+                clientConn.WriteToUDP(seqBuff,addressFrom)
+            }
+            
             
         }else {
-            
+            fmt.Println("Sequence Number Does Not Match and is not old sequenceNum")
         }
         
         
