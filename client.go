@@ -1,3 +1,18 @@
+/*********************************************************************
+*        ʕ◔ϖ◔ʔ               Client.go             ʕ◔ϖ◔ʔ            *
+**********************************************************************
+* CS 381 - Intro to Computer Networks    Project 3                   *
+* April 4th, 2016                                                    *
+**********************************************************************
+* Authors: Taylor Atkinson, Christopher Goulet                       *
+**********************************************************************
+* Input: This program asks the user to input file name into the      *
+* command line including the file extention.                         *
+**********************************************************************
+* Output: This program outputs the sequence Number, Payload size and *
+* when it is incrementing to the next packet.                        *
+*********************************************************************/
+
 package main
 
 
@@ -9,29 +24,26 @@ import (
     "os"
     "io"
     "time"
-    // "bufio"
 )
 
 
 func main() {
     
-    // gremlinIP := "127.0.0.1"
-    // gremlinPort := "8002"
     
     clear()
     fmt.Println("ʕ◔ϖ◔ʔ  Welcome to the GO Gremlin Client Process!!!  ʕ◔ϖ◔ʔ")
     
     //Open File
-    file, err := os.Open("go.png")
+    var fileName string
+    fmt.Print("Please enter your filename with extension: ")
+    _, err := fmt.Scanf("%s\n", &fileName)
+    checkError(err)
+    file, err := os.Open(fileName)
 
     
     checkError(err)   
    
-    //Listen for Grimlin for dropped Packets
-    // GremlinAddr, err := net.ResolveUDPAddr("udp",":9001") //Creates the Grimlim Address Object for listening
-    // checkError(err)
-    // ListeningConn, err := net.ListenUDP("udp", GremlinAddr) //Creates the connection for listening from the Grimlim
-    // checkError(err)
+
     
     //Create Sending Object
     serverAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:8001") //Address to Send to
@@ -42,7 +54,6 @@ func main() {
     //Create the Connection for Sending 
     SendingConn, err := net.ListenUDP("udp", localAddr)
     checkError(err)
-    //defer SendingConn.Close()
     
     
     
